@@ -2,30 +2,22 @@ ESX = nil
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
-function AddLicense(target, type, cb)
+function AddLicense(target, type)
 	local identifier = GetPlayerIdentifier(target, 0)
 
-	MySQL.Async.execute('INSERT INTO user_licenses (type, owner) VALUES (@type, @owner)', {
+	MySQL.Sync.execute('INSERT INTO user_licenses (type, owner) VALUES (@type, @owner)', {
 		['@type']  = type,
 		['@owner'] = identifier
-	}, function(rowsChanged)
-		if cb ~= nil then
-			cb()
-		end
-	end)
+	})
 end
 
-function RemoveLicense(target, type, cb)
+function RemoveLicense(target, type)
 	local identifier = GetPlayerIdentifier(target, 0)
 
-	MySQL.Async.execute('DELETE FROM user_licenses WHERE type = @type AND owner = @owner', {
+	MySQL.Sync.execute('DELETE FROM user_licenses WHERE type = @type AND owner = @owner', {
 		['@type']  = type,
 		['@owner'] = identifier
-	}, function(rowsChanged)
-		if cb ~= nil then
-			cb()
-		end
-	end)
+	})
 end
 
 function GetLicense(type, cb)
@@ -111,13 +103,13 @@ function GetLicensesList(cb)
 	end)
 end
 
-RegisterNetEvent('esx_license:addLicense')
-AddEventHandler('esx_license:addLicense', function(target, type, cb)
+RegisterServerEvent('esx_license:addLicense')
+AddEventHandler('esx_license:addLicense', function(target, type)
 	AddLicense(target, type, cb)
 end)
 
-RegisterNetEvent('esx_license:removeLicense')
-AddEventHandler('esx_license:removeLicense', function(target, type, cb)
+RegisterServerEvent('esx_license:removeLicense')
+AddEventHandler('esx_license:removeLicense', function(target, type)
 	RemoveLicense(target, type, cb)
 end)
 
